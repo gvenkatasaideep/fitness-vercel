@@ -44,6 +44,29 @@ export default function Nutrition() {
     return (
 
         <>
+        <div className="container mt-4">
+  <h2 className="mb-4">Nutrition Tracker</h2>
+
+  <div className="card shadow-sm">
+    <div className="card-body">
+      <form>
+        <div className="mb-3">
+          <label className="form-label">Food Name</label>
+          <input className="form-control" placeholder="Enter food name" />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Calories</label>
+          <input type="number" className="form-control" placeholder="Enter calories" />
+        </div>
+
+        <button type="submit" className="btn btn-primary">
+          Add Food
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
 
             <SectionTitle
                 title="Nutrition tracker"

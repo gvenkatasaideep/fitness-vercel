@@ -12,7 +12,7 @@ import Sidebar from "./components/Sidebar";
 
 // Import user pages
 
-import overview from "./pages/overview.jsx";
+import Overview from "./pages/overview.jsx";
 
 import Activity from "./pages/Activity";
 
@@ -202,10 +202,7 @@ export default function App() {
             default:
 
                 return (
-                    <overview
-                        user={user}
-                        records={records}
-                    />
+                    <Overview user={user} records={records} />
                 );
 
         }

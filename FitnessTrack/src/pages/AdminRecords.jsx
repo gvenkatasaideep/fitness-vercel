@@ -6,6 +6,31 @@ export default function AdminRecords({ records }) {
     return (
 
         <>
+        <div className="container mt-4">
+  <h2 className="mb-4">Activity Records</h2>
+
+  <div className="table-responsive">
+    <table className="table table-hover table-bordered">
+      <thead className="table-dark">
+        <tr>
+          <th>User</th>
+          <th>Steps</th>
+          <th>Calories</th>
+          <th>Active Minutes</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>Demo User</td>
+          <td>5000</td>
+          <td>350</td>
+          <td>45</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
             <SectionTitle
                 title="Fitness records"

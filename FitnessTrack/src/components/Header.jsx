@@ -6,6 +6,15 @@ export default function Header({
 
     return (
         <header className="topbar">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+  <a className="navbar-brand" href="#">
+    FitTrack
+  </a>
+
+  <span className="navbar-text text-white ms-auto">
+    Your Fitness Journey
+  </span>
+</nav>
 
             <button
                 className="mobile-menu"

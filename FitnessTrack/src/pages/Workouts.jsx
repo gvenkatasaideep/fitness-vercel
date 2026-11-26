@@ -63,6 +63,41 @@ export default function Workouts() {
     return (
 
         <>
+        <div className="container mt-4">
+  <h2 className="mb-4">Workouts</h2>
+
+  <div className="row g-3">
+    <div className="col-md-4">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h5>Running</h5>
+          <p className="text-muted">Improve your stamina.</p>
+          <button className="btn btn-success">Start Workout</button>
+        </div>
+      </div>
+    </div>
+
+    <div className="col-md-4">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h5>Cycling</h5>
+          <p className="text-muted">Build your endurance.</p>
+          <button className="btn btn-success">Start Workout</button>
+        </div>
+      </div>
+    </div>
+
+    <div className="col-md-4">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h5>Yoga</h5>
+          <p className="text-muted">Improve flexibility.</p>
+          <button className="btn btn-success">Start Workout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
             <SectionTitle
                 title="Workout plans"

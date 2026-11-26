@@ -1,174 +1,218 @@
 
+import React from "react";
 import SectionTitle from "../components/SectionTitle";
 import StatCard from "../components/StatCard";
 
 export default function Overview({ user, records = [] }) {
+  const myRecords = records.filter(
+    (record) => record.userEmail === user?.email
+  );
 
-    // Safely handle user information
-    const userName = user?.name || "User";
-    const firstName = userName.split(" ")[0];
+  const totalSteps = myRecords.reduce(
+    (sum, record) => sum + Number(record.steps || 0), 0
+  );
 
-    // Safely get user records
-    const safeRecords = Array.isArray(records) ? records : [];
+  const totalCalories = myRecords.reduce(
+    (sum, record) => sum + Number(record.calories || 0), 0
+  );
 
-    const mine = safeRecords.filter(
-        (record) => record.userEmail === user?.email
-    );
+  const totalMinutes = myRecords.reduce(
+    (sum, record) => sum + Number(record.activeMinutes || 0), 0
+  );
 
-    const today = mine[mine.length - 1] || {};
+  const dailyGoal = 6000;
+  const today = new Date().toISOString().slice(0, 10);
 
-    const steps = Number(today.steps) || 0;
-    const calories = Number(today.calories) || 0;
-    const minutes = Number(today.minutes) || 0;
+  const todaySteps = myRecords
+    .filter((record) => record.date === today)
+    .reduce((sum, record) => sum + Number(record.steps || 0), 0);
 
-    return (
-        <>
-            <SectionTitle
-                title={`Good day, ${firstName}!`}
-                subtitle="Here is a quick look at your fitness activity."
+  const progress = Math.min(
+    Math.round((todaySteps / dailyGoal) * 100), 100
+  );
+
+  const weeklyData = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - index));
+
+    const dateString = date.toISOString().slice(0, 10);
+
+    const steps = myRecords
+      .filter((record) => record.date === dateString)
+      .reduce((sum, record) => sum + Number(record.steps || 0), 0);
+
+    return {
+      day: date.toLocaleDateString("en", { weekday: "short" }),
+      steps
+    };
+  });
+
+  const maxSteps = Math.max(
+    ...weeklyData.map((item) => item.steps),
+    dailyGoal
+  );
+
+  return (
+
+    
+    <div className="overview-page">
+        <div className="container-fluid mt-4">
+  <h2 className="mb-4">Dashboard Overview</h2>
+
+  <div className="row g-3">
+    <div className="col-md-4">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h5 className="card-title">Daily Steps</h5>
+          <h2 className="text-primary">5000</h2>
+          <p className="text-muted">Your daily step count</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="col-md-4">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h5 className="card-title">Calories Burned</h5>
+          <h2 className="text-success">350</h2>
+          <p className="text-muted">Calories burned today</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="col-md-4">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h5 className="card-title">Active Minutes</h5>
+          <h2 className="text-warning">45</h2>
+          <p className="text-muted">Today's activity</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <SectionTitle
+        title={`Welcome, ${user?.name || "Member"}!`}
+        subtitle="Your health journey starts with small daily steps."
+      />
+
+      <div className="stat-card">
+  <span className="stat-label">Total Steps</span>
+  <h3>{totalSteps.toLocaleString()}</h3>
+  <span className="stat-note">All recorded activities</span>
+</div>
+
+<div className="stat-card">
+  <span className="stat-label">Calories Burned</span>
+  <h3>{totalCalories.toLocaleString()}</h3>
+  <span className="stat-note">Total recorded calories</span>
+</div>
+
+<div className="stat-card">
+  <span className="stat-label">Active Minutes</span>
+  <h3>{totalMinutes.toLocaleString()}</h3>
+  <span className="stat-note">Total activity duration</span>
+</div>
+
+      <div className="overview-grid">
+        <section className="panel">
+          <h3>Today's Step Goal</h3>
+
+          <div className="goal-number">
+            {todaySteps.toLocaleString()} / {dailyGoal.toLocaleString()}
+          </div>
+
+          <div className="progress-track">
+            <div
+              className="progress-fill"
+              style={{ width: `${progress}%` }}
             />
+          </div>
 
-            <div className="welcome-banner">
-                <div>
-                    <span className="eyebrow">
-                        KEEP MOVING FORWARD
-                    </span>
+          <p className="muted">
+            {progress}% completed
+          </p>
 
-                    <h2>Every movement counts.</h2>
+          <p>
+            {todaySteps >= dailyGoal
+              ? "Great job! You reached your daily step goal."
+              : `You need ${(dailyGoal - todaySteps).toLocaleString()} more steps to reach your goal.`}
+          </p>
+        </section>
 
-                    <p>
-                        Stay consistent today and get one step
-                        closer to your goals.
-                    </p>
+        <section className="panel">
+          <h3>Weekly Activity</h3>
+
+          <div className="weekly-chart">
+            {weeklyData.map((item) => (
+              <div className="chart-column" key={item.day}>
+                <span className="chart-value">
+                  {item.steps > 0 ? item.steps : ""}
+                </span>
+
+                <div className="chart-bar-area">
+                  <div
+                    className="chart-bar"
+                    style={{
+                      height: `${Math.max(
+                        (item.steps / maxSteps) * 100,
+                        item.steps > 0 ? 5 : 0
+                      )}%`
+                    }}
+                  />
                 </div>
 
-                <div className="banner-symbol">
-                    ✦
-                </div>
-            </div>
+                <span className="chart-day">{item.day}</span>
+              </div>
+            
+            ))}
 
-            <div className="stats-grid">
+          </div>
+        </section>
+      </div>
 
-                <StatCard
-                    icon="👟"
-                    label="Steps today"
-                    value={steps.toLocaleString()}
-                    note="Daily movement"
-                />
+      <section className="panel daily-tip">
+        <h3>Daily Fitness Tip</h3>
+        <p>
+          Stay consistent! A short walk, enough water, and proper rest
+          can make a difference in your fitness journey.
+        </p>
+      </section>
 
-                <StatCard
-                    icon="🔥"
-                    label="Calories burned"
-                    value={`${calories} kcal`}
-                    note="Estimated calories"
-                />
+      <section className="panel">
+        <h3>Recent Activity</h3>
 
-                <StatCard
-                    icon="⏱"
-                    label="Active minutes"
-                    value={`${minutes} min`}
-                    note="Time spent moving"
-                />
+        {myRecords.length === 0 ? (
+          <p className="muted">
+            No activity records yet. Visit Activity to add your first record.
+          </p>
+        ) : (
+          <div className="activity-table-wrap">
+            <table className="fitness-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Steps</th>
+                  <th>Calories</th>
+                  <th>Active Minutes</th>
+                </tr>
+              </thead>
 
-                <StatCard
-                    icon="📈"
-                    label="Activities logged"
-                    value={mine.length}
-                    note="Your saved records"
-                />
-
-            </div>
-
-            <div className="content-grid">
-
-                <section className="panel">
-
-                    <h3>Today's focus</h3>
-
-                    <p className="muted">
-                        A balanced day includes movement,
-                        hydration, and rest.
-                    </p>
-
-                    <div className="focus-row">
-                        <span>Movement</span>
-                        <strong>
-                            {steps.toLocaleString()} steps
-                        </strong>
-                    </div>
-
-                    <div className="progress-track">
-                        <div
-                            className="progress-fill"
-                            style={{
-                                width: `${Math.min(
-                                    (steps / 8000) * 100,
-                                    100
-                                )}%`
-                            }}
-                        />
-                    </div>
-
-                    <div className="focus-row">
-                        <span>Active time</span>
-                        <strong>{minutes} / 30 min</strong>
-                    </div>
-
-                    <div className="progress-track">
-                        <div
-                            className="progress-fill purple"
-                            style={{
-                                width: `${Math.min(
-                                    (minutes / 30) * 100,
-                                    100
-                                )}%`
-                            }}
-                        />
-                    </div>
-
-                </section>
-
-                <section className="panel">
-
-                    <h3>Fitness reminders</h3>
-
-                    <ul className="reminder-list">
-
-                        <li>
-                            <span>💧</span>
-                            <div>
-                                <strong>Drink water</strong>
-                                <p>
-                                    Stay hydrated throughout the day.
-                                </p>
-                            </div>
-                        </li>
-
-                        <li>
-                            <span>🧘</span>
-                            <div>
-                                <strong>Take a stretch break</strong>
-                                <p>
-                                    Give your body time to recover.
-                                </p>
-                            </div>
-                        </li>
-
-                        <li>
-                            <span>🌙</span>
-                            <div>
-                                <strong>Prioritize sleep</strong>
-                                <p>
-                                    Good rest supports fitness progress.
-                                </p>
-                            </div>  
-                        </li>
-
-                    </ul>
-
-                </section>
-
-            </div>
-        </>
-    );
+              <tbody>
+                {[...myRecords].reverse().slice(0, 5).map((record) => (
+                  <tr key={record.id}>
+                    <td>{record.date}</td>
+                    <td>{Number(record.steps || 0).toLocaleString()}</td>
+                    <td>{record.calories || 0} kcal</td>
+                    <td>{record.activeMinutes || 0} min</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+    </div>
+    
+  );
 }

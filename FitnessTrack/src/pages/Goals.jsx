@@ -15,6 +15,27 @@ export default function Goals() {
     return (
 
         <>
+        <div className="container mt-4">
+  <h2 className="mb-4">Fitness Goals</h2>
+
+  <div className="card shadow-sm">
+    <div className="card-body">
+      <h5>Daily Step Goal</h5>
+      <p>5000 / 10000 steps</p>
+
+      <div className="progress mb-3">
+        <div
+          className="progress-bar bg-success"
+          style={{ width: "50%" }}
+        >
+          50%
+        </div>
+      </div>
+
+      <button className="btn btn-primary">Update Goal</button>
+    </div>
+  </div>
+</div>
 
             <SectionTitle
                 title="Goals & reports"

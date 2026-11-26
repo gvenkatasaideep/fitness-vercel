@@ -11,6 +11,33 @@ export default function AdminUsers({ users }) {
     return (
 
         <>
+        <div className="container mt-4">
+  <h2 className="mb-4">Manage Users</h2>
+
+  <div className="table-responsive">
+    <table className="table table-striped table-bordered">
+      <thead className="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>Demo User</td>
+          <td>user@example.com</td>
+          <td>User</td>
+          <td>
+            <button className="btn btn-danger btn-sm">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
             <SectionTitle
                 title="Manage users"

@@ -1,203 +1,214 @@
-import { useState } from "react";
 
+import React, { useState } from "react";
 import SectionTitle from "../components/SectionTitle";
 
+export default function Activity({ user, records = [], onAddRecord }) {
+  const [form, setForm] = useState({
+    steps: "",
+    calories: "",
+    activeMinutes: "",
+    note: ""
+  });
 
-export default function Activity({
-    user,
-    records,
-    onAddRecord
-}) {
+  const [message, setMessage] = useState("");
 
-    const [steps, setSteps] = useState("");
+  const myRecords = records.filter(
+    (record) => record.userEmail === user?.email
+  );
 
-    const [calories, setCalories] = useState("");
+  function handleChange(event) {
+    const { name, value } = event.target;
 
-    const [minutes, setMinutes] = useState("");
+    setForm((previous) => ({
+      ...previous,
+      [name]: value
+    }));
+  }
 
-    const [note, setNote] = useState("");
+  function handleSubmit(event) {
+    event.preventDefault();
 
-
-    const mine = records
-        .filter((record) => record.userEmail === user.email)
-        .slice()
-        .reverse();
-
-
-    function submitActivity(event) {
-
-        event.preventDefault();
-
-        onAddRecord({
-
-            userEmail: user.email,
-
-            userName: user.name,
-
-            steps: Number(steps),
-
-            calories: Number(calories),
-
-            minutes: Number(minutes),
-
-            note: note,
-
-            date: new Date().toLocaleDateString()
-
-        });
-
-
-        setSteps("");
-
-        setCalories("");
-
-        setMinutes("");
-
-        setNote("");
-
+    if (
+      form.steps === "" ||
+      form.calories === "" ||
+      form.activeMinutes === ""
+    ) {
+      setMessage("Please fill in all required fields.");
+      return;
     }
 
+    const newRecord = {
+      id: Date.now(),
+      userEmail: user.email,
+      date: new Date().toISOString().slice(0, 10),
+      steps: Number(form.steps),
+      calories: Number(form.calories),
+      activeMinutes: Number(form.activeMinutes),
+      note: form.note
+    };
 
-    return (
+    onAddRecord(newRecord);
 
-        <>
+    setForm({
+      steps: "",
+      calories: "",
+      activeMinutes: "",
+      note: ""
+    });
 
-            <SectionTitle
-                title="Activity tracking"
-                subtitle="Record your daily movement and review your activity history."
-            />
+    setMessage("Activity saved successfully!");
+  }
 
+  return (
+    <div className="activity-page">
+        <div className="container mt-4">
+  <h2 className="mb-4">Track Your Activity</h2>
 
-            <div className="content-grid activity-layout">
+  <div className="card shadow-sm">
+    <div className="card-body">
+      <form>
+        <div className="mb-3">
+          <label className="form-label">Steps</label>
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Enter steps"
+          />
+        </div>
 
-                <form
-                    className="panel form-panel"
-                    onSubmit={submitActivity}
-                >
+        <div className="mb-3">
+          <label className="form-label">Calories Burned</label>
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Enter calories"
+          />
+        </div>
 
-                    <h3>Add today's activity</h3>
+        <div className="mb-3">
+          <label className="form-label">Active Minutes</label>
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Enter active minutes"
+          />
+        </div>
 
+        <button type="submit" className="btn btn-primary">
+          Save Activity
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+      <SectionTitle
+        title="Activity Tracking"
+        subtitle="Record your daily movement and review your activity history."
+      />
 
-                    <label>
-                        Steps
+      <div className="activity-layout">
+        <section className="panel">
+          <h3>Add Today's Activity</h3>
 
-                        <input
-                            type="number"
-                            min="0"
-                            value={steps}
-                            onChange={(e) => setSteps(e.target.value)}
-                            required
-                            placeholder="Example: 6500"
-                        />
-                    </label>
+          <form onSubmit={handleSubmit} className="activity-form">
+            <div className="form-grid">
+              <div className="form-group">
+                <label>Steps</label>
+                <input
+                  type="number"
+                  name="steps"
+                  min="0"
+                  placeholder="Example: 6500"
+                  value={form.steps}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
+              <div className="form-group">
+                <label>Calories Burned (kcal)</label>
+                <input
+                  type="number"
+                  name="calories"
+                  min="0"
+                  placeholder="Example: 320"
+                  value={form.calories}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-                    <label>
-                        Calories burned (kcal)
+              <div className="form-group">
+                <label>Active Minutes</label>
+                <input
+                  type="number"
+                  name="activeMinutes"
+                  min="0"
+                  placeholder="Example: 45"
+                  value={form.activeMinutes}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-                        <input
-                            type="number"
-                            min="0"
-                            value={calories}
-                            onChange={(e) => setCalories(e.target.value)}
-                            required
-                            placeholder="Example: 320"
-                        />
-                    </label>
-
-
-                    <label>
-                        Active minutes
-
-                        <input
-                            type="number"
-                            min="0"
-                            value={minutes}
-                            onChange={(e) => setMinutes(e.target.value)}
-                            required
-                            placeholder="Example: 45"
-                        />
-                    </label>
-
-
-                    <label>
-                        Activity note
-
-                        <input
-                            value={note}
-                            onChange={(e) => setNote(e.target.value)}
-                            placeholder="Example: Evening walk"
-                        />
-                    </label>
-
-
-                    <button
-                        className="button button-primary"
-                        type="submit"
-                    >
-                        Save activity
-                    </button>
-
-                </form>
-
-
-                <section className="panel">
-
-                    <h3>Activity history</h3>
-
-                    {mine.length === 0 ? (
-
-                        <p className="empty-state">
-                            No activities yet. Add your first activity.
-                        </p>
-
-                    ) : (
-
-                        <div className="table-wrap">
-
-                            <table>
-
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Steps</th>
-                                        <th>Calories</th>
-                                        <th>Minutes</th>
-                                    </tr>
-                                </thead>
-
-
-                                <tbody>
-
-                                    {mine.map((record, index) => (
-
-                                        <tr key={`${record.date}-${index}`}>
-
-                                            <td>{record.date}</td>
-
-                                            <td>{record.steps}</td>
-
-                                            <td>{record.calories}</td>
-
-                                            <td>{record.minutes}</td>
-
-                                        </tr>
-
-                                    ))}
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    )}
-
-                </section>
-
+              <div className="form-group full-width">
+                <label>Activity Note</label>
+                <input
+                  type="text"
+                  name="note"
+                  placeholder="Example: Evening walk"
+                  value={form.note}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
 
-        </>
+            {message && (
+              <p className="form-message">{message}</p>
+            )}
 
-    );
+            <button type="submit" className="button button-primary">
+              Save Activity
+            </button>
+          </form>
+        </section>
+
+        <section className="panel">
+          <h3>Activity History</h3>
+
+          {myRecords.length === 0 ? (
+            <p className="muted">
+              No activities yet. Add your first activity.
+            </p>
+          ) : (
+            <div className="activity-table-wrap">
+              <table className="fitness-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Steps</th>
+                    <th>Calories</th>
+                    <th>Minutes</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {[...myRecords].reverse().map((record) => (
+                    <tr key={record.id}>
+                      <td>{record.date}</td>
+                      <td>{record.steps}</td>
+                      <td>{record.calories} kcal</td>
+                      <td>{record.activeMinutes} min</td>
+                      <td>{record.note || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
+  );
 }
